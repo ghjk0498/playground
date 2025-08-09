@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: playground
+
+server:
+  port: 80
+
+springdoc:
+  api-docs:
+    # optional; explicit for clarity
+    path: /v3/api-docs
+  swagger-ui:
+    # Serve Swagger UI at root path
+    path: /
+    # Avoid loading the default petstore URL
+    disable-swagger-default-url: true
+
+app:
+  redis-docker:
+    containerName: playground-redis
+    image: redis:8.2.0-alpine
+    hostPort: 6379
+    containerPort: 6379
+  redis:
+    host: localhost
+    port: 6379
+    # username: default
+    # password: your-password
+    database: 0

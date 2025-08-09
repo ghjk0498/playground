@@ -24,6 +24,12 @@ dependencies {
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    // Swagger/OpenAPI for Spring WebFlux
+    implementation("org.apache.commons:commons-lang3:3.18.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.9")
+    // Lettuce Redis client (direct, per-call connect/close)
+    implementation("io.lettuce:lettuce-core:6.5.3.RELEASE")
+
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
