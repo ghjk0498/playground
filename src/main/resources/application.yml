@@ -1,6 +1,14 @@
 spring:
   application:
     name: playground
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/appdb
+    username: postgres
+    password: postgres
+  datasource:
+    url: jdbc:postgresql://localhost:5432/appdb
+    username: postgres
+    password: postgres
 
 server:
   port: 80
@@ -14,6 +22,7 @@ springdoc:
     path: /
     # Avoid loading the default petstore URL
     disable-swagger-default-url: true
+  
 
 app:
   redis-docker:
@@ -35,3 +44,9 @@ app:
     # username: default
     # password: your-password
     database: 0
+  postgres:
+    host: localhost
+    port: 5432
+    database: appdb
+    username: postgres
+    password: postgres
