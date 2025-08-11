@@ -1,4 +1,4 @@
-package khg.example.playground.postgres
+package khg.example.playground.postgres.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

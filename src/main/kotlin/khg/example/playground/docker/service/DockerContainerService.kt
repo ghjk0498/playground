@@ -4,7 +4,7 @@ import khg.example.playground.docker.config.PostgresDockerProperties
 import khg.example.playground.docker.config.RedisDockerProperties
 import khg.example.playground.docker.enums.DockerContainerType
 import khg.example.playground.docker.service.dto.ContainerStatus
-import khg.example.playground.docker.toDockerArgs
+import khg.example.playground.docker.extensions.toDockerArgs
 import org.springframework.stereotype.Service
 
 @Service

@@ -1,4 +1,4 @@
-package khg.example.playground.docker
+package khg.example.playground.docker.extensions
 
 import khg.example.playground.docker.config.PostgresDockerProperties
 import khg.example.playground.docker.config.RedisDockerProperties

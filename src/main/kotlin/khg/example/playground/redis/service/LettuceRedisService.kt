@@ -1,4 +1,4 @@
-package khg.example.playground.redis
+package khg.example.playground.redis.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.lettuce.core.RedisClient
@@ -6,6 +6,7 @@ import io.lettuce.core.RedisURI
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor
 import io.lettuce.core.api.StatefulRedisConnection
+import khg.example.playground.redis.config.RedisConnectionProperties
 import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.stereotype.Service
 import java.time.Duration

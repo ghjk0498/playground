@@ -1,5 +1,7 @@
-package khg.example.playground.redis
+package khg.example.playground.redis.controller
 
+import khg.example.playground.redis.config.RedisConnectionProperties
+import khg.example.playground.redis.service.LettuceRedisService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping

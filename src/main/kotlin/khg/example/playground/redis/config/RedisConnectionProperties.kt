@@ -1,4 +1,4 @@
-package khg.example.playground.redis
+package khg.example.playground.redis.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
