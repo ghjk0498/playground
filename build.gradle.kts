@@ -33,8 +33,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.postgresql:r2dbc-postgresql:1.0.7.RELEASE")
     // Flyway (JDBC) for schema migrations
-    implementation("org.flywaydb:flyway-core:10.20.0")
-    runtimeOnly("org.postgresql:postgresql:42.7.4")
+    implementation("org.postgresql:postgresql:42.7.7")
+    implementation("org.flywaydb:flyway-core:11.10.5")
+    runtimeOnly("org.flywaydb:flyway-database-postgresql:11.10.5")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

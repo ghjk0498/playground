@@ -5,6 +5,12 @@ spring:
     url: r2dbc:postgresql://localhost:${app.postgres-docker.hostPort}/${app.postgres-docker.database}
     username: ${app.postgres-docker.username}
     password: ${app.postgres-docker.password}
+  flyway:
+    url: jdbc:postgresql://localhost:${app.postgres-docker.hostPort}/${app.postgres-docker.database}
+    user: ${app.postgres-docker.username}
+    password: ${app.postgres-docker.password}
+    baseline-on-migrate: true
+    enabled: false
 
 server:
   port: 80
@@ -24,19 +30,19 @@ app:
   redis-docker:
     containerName: playground-redis
     image: redis:8.2.0-alpine
-    hostPort: 6379
+    hostPort: 6380
     containerPort: 6379
   postgres-docker:
     containerName: playground-postgres
     image: postgres:16-alpine
-    hostPort: 5432
+    hostPort: 5433
     containerPort: 5432
     database: postgres
     username: postgres
     password: postgres
   redis:
     host: localhost
-    port: 6379
+    port: ${app.redis-docker.hostPort}
     # username: default
     # password: your-password
     database: 0

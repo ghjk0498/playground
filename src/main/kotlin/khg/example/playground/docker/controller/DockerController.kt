@@ -16,7 +16,7 @@ class DockerController(private val dockerContainerService: DockerContainerServic
     }
 
     @PostMapping("/start")
-    fun start(@RequestParam(required = true) dockerContainerType: DockerContainerType): ResponseEntity<ContainerStatus> {
+    suspend fun start(@RequestParam(required = true) dockerContainerType: DockerContainerType): ResponseEntity<ContainerStatus> {
         return ResponseEntity.ok(dockerContainerService.start(dockerContainerType))
     }
 

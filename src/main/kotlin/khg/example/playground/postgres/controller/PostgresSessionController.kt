@@ -4,6 +4,7 @@ import khg.example.playground.postgres.config.PostgresConnectionProperties
 import khg.example.playground.postgres.service.PostgresSessionService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -40,6 +41,32 @@ class PostgresSessionController(
                     message = result.message
                 )
                 val status = if (result.message == null) HttpStatus.OK else HttpStatus.SERVICE_UNAVAILABLE
+                ResponseEntity.status(status).body(body)
+            }
+    }
+
+    data class TruncateResponse(
+        val host: String,
+        val port: Int,
+        val database: String,
+        val success: Boolean,
+        val elapsedMs: Long,
+        val message: String? = null
+    )
+
+    @DeleteMapping("/truncate")
+    fun truncate(): Mono<ResponseEntity<TruncateResponse>> {
+        return service.truncate()
+            .map { result ->
+                val body = TruncateResponse(
+                    host = props.host,
+                    port = props.port,
+                    database = props.database,
+                    success = result.success,
+                    elapsedMs = result.elapsedMs,
+                    message = result.message
+                )
+                val status = if (result.success) HttpStatus.OK else HttpStatus.SERVICE_UNAVAILABLE
                 ResponseEntity.status(status).body(body)
             }
     }

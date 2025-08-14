@@ -6,15 +6,10 @@ import io.lettuce.core.RedisURI
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor
 import io.lettuce.core.api.StatefulRedisConnection
+import khg.example.playground.common.generateRandomSessionData
 import khg.example.playground.redis.config.RedisConnectionProperties
-import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.stereotype.Service
 import java.time.Duration
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.util.UUID
-import kotlin.random.Random
 
 @Service
 class LettuceRedisService(
@@ -84,30 +79,20 @@ class LettuceRedisService(
             connection = client.connect()
             val commands = connection.sync()
 
-            val formatter = DateTimeFormatter.ISO_INSTANT
             var success = 0
             var failed = 0
 
-            repeat(n) {
+            val sessions = generateRandomSessionData(n)
+            sessions.forEach {
                 try {
-                    val sessionId = UUID.randomUUID().toString()
-                    val key = "session:$sessionId"
-
-                    val now = Instant.now()
-                    val loginOffsetSec = Random.nextLong(0, 7L * 24 * 3600)
-                    val loginTime = now.minusSeconds(loginOffsetSec)
-                    val activityOffsetSec = Random.nextLong(0, 6 * 3600L)
-                    val lastActivity = loginTime.plusSeconds(activityOffsetSec)
-
-                    val permissionsPool = listOf("read", "write")
-                    val perm = if (Random.nextBoolean()) permissionsPool else listOf("read")
+                    val key = "session:$it.sessionId"
 
                     val valueMap = mapOf(
-                        "user_id" to RandomStringUtils.randomNumeric(5),
-                        "username" to ("user_" + RandomStringUtils.randomAlphanumeric(6).lowercase()),
-                        "login_time" to formatter.format(loginTime.atOffset(ZoneOffset.UTC)),
-                        "last_activity" to formatter.format(lastActivity.atOffset(ZoneOffset.UTC)),
-                        "permissions" to perm
+                        "user_id" to it.userId,
+                        "username" to it.userName,
+                        "login_time" to it.loginTime,
+                        "last_activity" to it.lastActivity,
+                        "permissions" to it.permissions,
                     )
                     val json = objectMapper.writeValueAsString(valueMap)
 

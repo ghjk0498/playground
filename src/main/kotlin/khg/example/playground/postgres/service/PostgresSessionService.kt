@@ -1,24 +1,18 @@
 package khg.example.playground.postgres.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import khg.example.playground.common.generateRandomSessionData
 import khg.example.playground.postgres.config.PostgresConnectionProperties
 import khg.example.playground.postgres.entity.SessionEntity
 import khg.example.playground.postgres.repository.SessionRepository
-import org.apache.commons.lang3.RandomStringUtils
+import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.util.UUID
-import kotlin.random.Random
 
 @Service
 class PostgresSessionService(
     private val repository: SessionRepository,
     private val props: PostgresConnectionProperties,
-    private val objectMapper: ObjectMapper,
+    private val databaseClient: DatabaseClient,
 ) {
     data class GenerateResult(
         val host: String,
@@ -33,38 +27,16 @@ class PostgresSessionService(
     fun generate(n: Int): Mono<GenerateResult> {
         val count = if (n <= 0) 10000 else n
         val start = System.nanoTime()
-        val ttlSeconds = 3600L
 
-        val entities = Flux.range(0, count)
+        val entities = generateRandomSessionData(n)
             .map {
-                val sessionUuid = UUID.randomUUID().toString()
-                val sessionId = "session:$sessionUuid"
-
-                val now = Instant.now()
-                val loginOffsetSec = Random.nextLong(0, 7L * 24 * 3600)
-                val createdAt = LocalDateTime.ofInstant(now.minusSeconds(loginOffsetSec), ZoneOffset.UTC)
-                val activityOffsetSec = Random.nextLong(0, 6 * 3600L)
-                val lastAccessed = LocalDateTime.ofInstant(now.minusSeconds(loginOffsetSec - activityOffsetSec), ZoneOffset.UTC)
-                val expiresAt = createdAt.plusSeconds(ttlSeconds)
-
-                val userId = RandomStringUtils.randomNumeric(5).toLong()
-                val username = "user_" + RandomStringUtils.randomAlphanumeric(6).lowercase()
-
-                val sessionDataMap = mapOf(
-                    "user_id" to userId.toString(),
-                    "username" to username,
-                    "login_time" to createdAt.atOffset(ZoneOffset.UTC).toString(),
-                    "last_activity" to lastAccessed.atOffset(ZoneOffset.UTC).toString()
-                )
-                val sessionDataJson = objectMapper.writeValueAsString(sessionDataMap)
-
                 SessionEntity(
-                    sessionId = sessionId,
-                    userId = userId,
-                    sessionData = sessionDataJson,
-                    createdAt = createdAt,
-                    expiresAt = expiresAt,
-                    lastAccessed = lastAccessed,
+                    sessionId = it.sessionId,
+                    userId = it.userId,
+                    userName = it.userName,
+                    loginTime = it.loginTime,
+                    lastActivity = it.lastActivity,
+                    permissions = it.permissions,
                 )
             }
 
@@ -83,6 +55,40 @@ class PostgresSessionService(
                         props.database,
                         count,
                         0,
+                        elapsed,
+                        e.message ?: e.toString()
+                    )
+                )
+            }
+    }
+
+    data class TruncateResult(
+        val host: String,
+        val port: Int,
+        val database: String,
+        val success: Boolean,
+        val elapsedMs: Long,
+        val message: String? = null
+    )
+
+    fun truncate(): Mono<TruncateResult> {
+        val start = System.nanoTime()
+        
+        return databaseClient.sql("TRUNCATE TABLE sessions")
+            .fetch()
+            .rowsUpdated()
+            .map { 
+                val elapsed = (System.nanoTime() - start) / 1_000_000
+                TruncateResult(props.host, props.port, props.database, true, elapsed)
+            }
+            .onErrorResume { e ->
+                val elapsed = (System.nanoTime() - start) / 1_000_000
+                Mono.just(
+                    TruncateResult(
+                        props.host,
+                        props.port,
+                        props.database,
+                        false,
                         elapsed,
                         e.message ?: e.toString()
                     )

@@ -1,15 +1,13 @@
-package khg.example.playground.postgres.entity
+package khg.example.playground.common.dto
 
-import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 import java.util.UUID
 
-@Table("sessions")
-data class SessionEntity(
+data class SessionData(
     val sessionId: UUID,
     val userId: Long,
     val userName: String,
     val loginTime: LocalDateTime,
     val lastActivity: LocalDateTime,
-    val permissions: List<String>
+    val permissions: List<String>,
 )
